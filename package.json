@@ -1,20 +1,21 @@
 {
   "name": "cli-zy",
   "version": "1.0.1",
-  "description": "Zhiyuan Zhang's CLI",
+  "description": "Zhiyuan Zhang's CLI - Git 快捷命令工具",
   "main": "index.js",
   "bin": {
-    "gca": "./bin/gca.js",
-    "gcb": "./bin/gcb.js",
-    "gco": "./bin/gco.js",
-    "gd": "./bin/gd.js"
+    "cli-zy": "./bin/cli-zy.js"
   },
   "scripts": {
-    "gca": "git commit -all -S",
-    "gcb": "git checkout -b",
-    "gco": "git checkout",
-    "gd": "git diff"
+    "setup": "node bin/cli-zy.js setup"
   },
-  "author": "",
+  "keywords": [
+    "cli",
+    "git",
+    "alias",
+    "shortcuts",
+    "productivity"
+  ],
+  "author": "Zhiyuan Zhang",
   "license": "ISC"
 }
