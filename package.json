@@ -3,6 +3,12 @@
   "version": "1.0.1",
   "description": "Zhiyuan Zhang's CLI",
   "main": "index.js",
+  "bin": {
+    "gca": "./bin/gca.js",
+    "gcb": "./bin/gcb.js",
+    "gco": "./bin/gco.js",
+    "gd": "./bin/gd.js"
+  },
   "scripts": {
     "gca": "git commit -all -S",
     "gcb": "git checkout -b",
