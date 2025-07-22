@@ -16,7 +16,7 @@ const gitAliases = {
   'gco': 'git checkout',
   'gca': 'git commit --all -S',
   'gpd': 'git push o HEAD',
-  'pull': 'git pull ==rebase',
+  'pull': 'git pull --rebase',
   'grbi':  'git rebase -i',
   'grh': 'git reset --hard',
   'gdbr': 'git branch --list | grep -Ev \'^\* \' | fzf -m | xargs -I {} git branch -D {}',
