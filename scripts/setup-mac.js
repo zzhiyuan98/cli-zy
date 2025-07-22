@@ -143,9 +143,27 @@ function installNodeJS() {
   log('• 查看已安装版本: nvm list');
 }
 
+// 安装 fzf
+function installFzf() {
+  logStep('4️⃣', '安装 fzf');
+  
+  if (commandExists('fzf')) {
+    logSuccess('fzf 已安装');
+    return;
+  }
+  
+  // 优先使用 Homebrew 安装
+  if (commandExists('brew')) {
+    runCommand('brew install fzf', '使用 Homebrew 安装 fzf');
+  } else {
+    logWarning('Homebrew 未安装，无法自动安装 fzf');
+    logWarning('请手动安装 fzf: https://github.com/junegunn/fzf#installation');
+  }
+}
+
 // 重新加载 shell 配置
 function reloadShellConfig() {
-  logStep('4️⃣', '重新加载 Shell 配置');
+  logStep('5️⃣', '重新加载 Shell 配置');
   
   try {
     const configPath = getShellConfigPath();
@@ -173,6 +191,7 @@ function main() {
   installHomebrew();
   installGit();
   installNodeJS();
+  installFzf();
   reloadShellConfig();
   
   log('\n🎉 Mac 开发环境配置完成！', 'bright');
