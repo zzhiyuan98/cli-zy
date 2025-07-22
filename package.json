@@ -1,6 +1,6 @@
 {
   "name": "cli-zy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Zhiyuan Zhang's CLI - Git 快捷命令工具",
   "main": "index.js",
   "bin": {
