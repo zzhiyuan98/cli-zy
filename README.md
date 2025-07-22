@@ -44,8 +44,8 @@ source ~/.zshrc  # 或 source ~/.bashrc
 ### 3. 开始使用
 
 ```bash
-# 提交所有更改并签名
-gca "feat: 添加新功能"
+# 查看差异
+gd
 
 # 创建并切换到新分支
 gcb feature/new-feature
@@ -53,34 +53,50 @@ gcb feature/new-feature
 # 切换分支
 gco main
 
-# 查看状态
-gst
+# 提交所有更改并签名
+gca "feat: 添加新功能"
 
-# 查看差异
-gd
+# 推送到远程分支
+gpd
 
-# 查看日志
-gl
+# 拉取并 rebase
+pull
 
-# 推送代码
-gp
+# 交互式 rebase
+grbi HEAD~3
 
-# 拉取代码
-gpl
+# 硬重置
+grh
+
+# 删除分支（交互式选择）
+gdbr
+
+# cherry-pick
+gcp <commit-hash>
+
+# 复制当前提交 ID
+id
+
+# 撤销上次提交
+undo
 ```
 
 ## 📋 可用命令
 
 | 别名 | 命令 | 说明 |
 |------|------|------|
-| `gca` | `git commit -all -S` | 提交所有更改并签名 |
+| `gd` | `git diff` | 查看差异 |
 | `gcb` | `git checkout -b` | 创建并切换到新分支 |
 | `gco` | `git checkout` | 切换分支 |
-| `gd` | `git diff` | 查看差异 |
-| `gst` | `git status` | 查看状态 |
-| `gl` | `git log --oneline` | 查看简洁日志 |
-| `gp` | `git push` | 推送代码 |
-| `gpl` | `git pull` | 拉取代码 |
+| `gca` | `git commit --all -S` | 提交所有更改并签名 |
+| `gpd` | `git push o HEAD` | 推送到远程分支 |
+| `pull` | `git pull ==rebase` | 拉取并 rebase |
+| `grbi` | `git rebase -i` | 交互式 rebase |
+| `grh` | `git reset --hard` | 硬重置 |
+| `gdbr` | `git branch --list \| grep -Ev '^\* ' \| fzf -m \| xargs -I {} git branch -D {}` | 删除分支（交互式选择） |
+| `gcp` | `git cherry-pick` | 遴选 |
+| `id` | `git rev-parse --short HEAD \| xargs echo -n \| pbcopy` | 复制当前提交 ID |
+| `undo` | `git reset --soft HEAD~` | 撤销上次提交 |
 
 ## 🔧 CLI 命令
 
@@ -102,14 +118,18 @@ $ cli-zy setup
    source ~/.zshrc
 
 📋 可用的快捷命令：
-   gca  - git commit -all -S
-   gcb  - git checkout -b
-   gco  - git checkout
-   gd   - git diff
-   gst  - git status
-   gl   - git log --oneline
-   gp   - git push
-   gpl  - git pull
+   gd    - git diff
+   gcb   - git checkout -b
+   gco   - git checkout
+   gca   - git commit --all -S
+   gpd   - git push o HEAD
+   pull  - git pull --rebase
+   grbi  - git rebase -i
+   grh   - git reset --hard
+   gdbr  - git branch --list | grep -Ev '^\* ' | fzf -m | xargs -I {} git branch -D {}
+   gcp   - git cherry-pick
+   id    - git rev-parse --short HEAD | xargs echo -n | pbcopy
+   undo  - git reset --soft HEAD~
 
 # 查看命令列表
 $ cli-zy list
@@ -117,14 +137,18 @@ $ cli-zy list
 ┌─────┬─────────────────────────────────┐
 │ 别名 │ 命令                            │
 ├─────┼─────────────────────────────────┤
-│ gca │ git commit -all -S              │
+│ gd  │ git diff                        │
 │ gcb │ git checkout -b                 │
 │ gco │ git checkout                    │
-│ gd  │ git diff                        │
-│ gst │ git status                      │
-│ gl  │ git log --oneline               │
-│ gp  │ git push                        │
-│ gpl │ git pull                        │
+│ gca │ git commit --all -S             │
+│ gpd │ git push o HEAD                 │
+│ pull│ git pull --rebase               │
+│ grbi│ git rebase -i                   │
+│ grh │ git reset --hard                │
+│ gdbr│ git branch --list | grep -Ev... │
+│ gcp │ git cherry-pick                 │
+│ id  │ git rev-parse --short HEAD...   │
+│ undo│ git reset --soft HEAD~          │
 └─────┴─────────────────────────────────┘
 ```
 
@@ -136,6 +160,6 @@ $ cli-zy list
 
 欢迎提交 Issue 和 Pull Request！
 
-## �� 许可证
+## 📄 许可证
 
 ISC License
