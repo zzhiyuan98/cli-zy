@@ -7,7 +7,8 @@
     "cli-zy": "./bin/cli-zy.js"
   },
   "scripts": {
-    "setup": "node bin/cli-zy.js setup"
+    "setup": "node bin/cli-zy.js setup",
+    "release": "npm version patch && git push && npm publish"
   },
   "keywords": [
     "cli",
