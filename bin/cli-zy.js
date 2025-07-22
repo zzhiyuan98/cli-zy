@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { getShellConfigPath } = require('../scripts/utils');
 
 // 获取命令行参数
 const args = process.argv.slice(2);
@@ -24,13 +25,6 @@ const gitAliases = {
   'id': 'git rev-parse --short HEAD | xargs echo -n | pbcopy',
   'undo': 'git reset --soft HEAD~',
 };
-
-// 获取 shell 配置文件路径
-function getShellConfigPath() {
-  const homeDir = os.homedir();
-  const shell = process.env.SHELL || '';
-  return path.join(homeDir, shell.includes('bash') ? '.bashrc' : '.zshrc');
-}
 
 // 检查别名是否已存在
 function aliasesExist(configPath) {
