@@ -39,24 +39,87 @@ function installHomebrew() {
   }
 }
 
-// 安装 Git
-function installGit() {
-  logStep('2️⃣', '安装 Git');
+// Git 别名配置
+const gitAliases = {
+  'gd': 'git diff',
+  'gcb': 'git checkout -b',
+  'gco': 'git checkout',
+  'gca': 'git commit --all -S',
+  'gpd': 'git push o HEAD',
+  'pull': 'git pull --rebase',
+  'grbi':  'git rebase -i',
+  'grh': 'git reset --hard',
+  'gdbr': 'git branch --list | grep -Ev \'^\* \' | fzf -m | xargs -I {} git branch -D {}',
+  'gcp': 'git cherry-pick',
+  'id': 'git rev-parse --short HEAD | xargs echo -n | pbcopy',
+  'undo': 'git reset --soft HEAD~',
+};
+
+// 检查别名是否已存在
+function aliasesExist(configPath) {
+  if (!fs.existsSync(configPath)) {
+    return false;
+  }
   
+  const content = fs.readFileSync(configPath, 'utf8');
+  return content.includes('alias gca=');
+}
+
+// 安装 Git 并配置别名
+function installGit() {
+  logStep('2️⃣', '安装 Git 并配置别名');
+  
+  // 安装 Git
   if (commandExists('git')) {
     logSuccess('Git 已安装');
+  } else {
+    // 优先使用 Homebrew 安装
+    if (commandExists('brew')) {
+      runCommand('brew install git', '使用 Homebrew 安装 Git');
+    } else {
+      // Homebrew 不可用时，引导用户去官网下载
+      logWarning('Homebrew 未安装，无法自动安装 Git');
+      logWarning('请从 Git 官网下载安装：https://git-scm.com/download/mac');
+      return;
+    }
+  }
+  
+  // 配置 Git 别名
+  const configPath = getShellConfigPath();
+  const shellName = path.basename(configPath);
+  
+  logStep('2️⃣', '配置 Git 快捷命令别名');
+  log(`📁 配置文件: ${configPath}`);
+  
+  // 检查是否已存在
+  if (aliasesExist(configPath)) {
+    logWarning('Git 别名已存在，跳过设置');
+    logWarning(`如需重新设置，请先手动删除 ${shellName} 中的别名配置`);
     return;
   }
   
-  // 优先使用 Homebrew 安装
-  if (commandExists('brew')) {
-    runCommand('brew install git', '使用 Homebrew 安装 Git');
-    return;
+  // 确保配置文件存在
+  if (!fs.existsSync(configPath)) {
+    log(`📝 创建 ${shellName} 文件...`);
+    fs.writeFileSync(configPath, '');
   }
   
-  // Homebrew 不可用时，引导用户去官网下载
-  logWarning('Homebrew 未安装，无法自动安装 Git');
-  logWarning('请从 Git 官网下载安装：https://git-scm.com/download/mac');
+  // 生成别名配置
+  let aliasConfig = '\n# Git 快捷命令别名 (由 cli-zy 自动生成)\n';
+  Object.entries(gitAliases).forEach(([alias, command]) => {
+    aliasConfig += `alias ${alias}='${command}'\n`;
+  });
+  aliasConfig += '# 结束 cli-zy 别名配置\n';
+  
+  // 写入配置文件
+  fs.appendFileSync(configPath, aliasConfig);
+  logSuccess('Git 别名配置完成');
+  
+  // 显示可用命令
+  log('\n📋 可用的 Git 快捷命令：', 'cyan');
+  Object.entries(gitAliases).forEach(([alias, command]) => {
+    log(`   ${alias.padEnd(4)} - ${command}`);
+  });
 }
 
 // 安装 nvm
