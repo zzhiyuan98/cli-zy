@@ -25,15 +25,7 @@ const gitAliases = {
 function getShellConfigPath() {
   const homeDir = os.homedir();
   const shell = process.env.SHELL || '';
-  
-  if (shell.includes('zsh')) {
-    return path.join(homeDir, '.zshrc');
-  } else if (shell.includes('bash')) {
-    return path.join(homeDir, '.bashrc');
-  } else {
-    // 默认使用 zsh
-    return path.join(homeDir, '.zshrc');
-  }
+  return path.join(homeDir, shell.includes('bash') ? '.bashrc' : '.zshrc');
 }
 
 // 检查别名是否已存在
