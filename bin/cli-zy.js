@@ -11,14 +11,18 @@ const command = args[0];
 
 // Git 别名配置
 const gitAliases = {
-  'gca': 'git commit -all -S',
+  'gd': 'git diff',
   'gcb': 'git checkout -b',
   'gco': 'git checkout',
-  'gd': 'git diff',
-  'gst': 'git status',
-  'gl': 'git log --oneline',
-  'gp': 'git push',
-  'gpl': 'git pull'
+  'gca': 'git commit --all -S',
+  'gpd': 'git push o HEAD',
+  'pull': 'git pull ==rebase',
+  'grbi':  'git rebase -i',
+  'grh': 'git reset --hard',
+  'gdbr': 'git branch --list | grep -Ev \'^\* \' | fzf -m | xargs -I {} git branch -D {}',
+  'gcp': 'git cherry-pick',
+  'id': 'git rev-parse --short HEAD | xargs echo -n | pbcopy',
+  'undo': 'git reset --soft HEAD~',
 };
 
 // 获取 shell 配置文件路径
@@ -125,23 +129,22 @@ function main() {
   switch (command) {
     case 'setup':
       setupAliases();
-      break;
+      return;
     case 'list':
       listCommands();
-      break;
+      return;
     case 'help':
     case '--help':
     case '-h':
       showHelp();
-      break;
+      return;
     default:
-      if (!command) {
-        showHelp();
-      } else {
+      if (command) {
         console.log(`❌ 未知命令: ${command}`);
         console.log(`💡 运行 'cli-zy help' 查看可用命令`);
+        return;
       }
-      break;
+      showHelp();
   }
 }
 
