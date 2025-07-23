@@ -7,7 +7,9 @@
     "cli-zy": "./bin/cli-zy.js"
   },
   "scripts": {
-    "release": "npm version patch && git push && npm publish"
+    "release": "npm version patch && git push && npm publish",
+    "test": "echo 'Run tests via GitHub Actions: npm run test:ci'",
+    "test:ci": "npm install -g . && cli-zy setup"
   },
   "keywords": [
     "cli",

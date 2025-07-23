@@ -1,0 +1,102 @@
+name: Test cli-zy on macOS
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install cli-zy
+      run: npm install -g .
+      
+    - name: Test cli-zy setup
+      run: cli-zy setup
+      
+    - name: Verify Homebrew installation
+      run: |
+        if command -v brew >/dev/null 2>&1; then
+          echo "✅ Homebrew installed successfully"
+          brew --version
+        else
+          echo "❌ Homebrew installation failed"
+          exit 1
+        fi
+        
+    - name: Verify Git installation
+      run: |
+        if command -v git >/dev/null 2>&1; then
+          echo "✅ Git installed successfully"
+          git --version
+        else
+          echo "❌ Git installation failed"
+          exit 1
+        fi
+        
+    - name: Verify nvm installation
+      run: |
+        if command -v nvm >/dev/null 2>&1; then
+          echo "✅ nvm installed successfully"
+          nvm --version
+        else
+          echo "❌ nvm installation failed"
+          exit 1
+        fi
+        
+    - name: Verify fzf installation
+      run: |
+        if command -v fzf >/dev/null 2>&1; then
+          echo "✅ fzf installed successfully"
+          fzf --version
+        else
+          echo "❌ fzf installation failed"
+          exit 1
+        fi
+        
+    - name: Verify Git aliases
+      run: |
+        if [ -f ~/.zshrc ] && grep -q "alias gca=" ~/.zshrc; then
+          echo "✅ Git aliases configured successfully"
+          grep "alias gca=" ~/.zshrc
+        elif [ -f ~/.bashrc ] && grep -q "alias gca=" ~/.bashrc; then
+          echo "✅ Git aliases configured successfully"
+          grep "alias gca=" ~/.bashrc
+        else
+          echo "❌ Git aliases configuration failed"
+          exit 1
+        fi
+        
+    - name: Test Git aliases
+      run: |
+        # 测试 Git 别名是否可用
+        source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null
+        if alias gca >/dev/null 2>&1; then
+          echo "✅ Git alias 'gca' is available"
+        else
+          echo "❌ Git alias 'gca' is not available"
+          exit 1
+        fi
+        
+    - name: Show configuration files
+      run: |
+        echo "📄 Shell configuration files:"
+        if [ -f ~/.zshrc ]; then
+          echo "~/.zshrc exists"
+          cat ~/.zshrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh)" || echo "No relevant configurations found"
+        fi
+        if [ -f ~/.bashrc ]; then
+          echo "~/.bashrc exists"
+          cat ~/.bashrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh)" || echo "No relevant configurations found"
+        fi 
