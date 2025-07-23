@@ -128,12 +128,6 @@ function installNvm() {
   
   if (commandExists('nvm')) {
     logSuccess('nvm 已安装');
-    log('\n📋 nvm 基本用法：', 'cyan');
-    log('• 安装最新 LTS 版本: nvm install --lts');
-    log('• 安装指定版本: nvm install 18.17.0');
-    log('• 切换版本: nvm use 18.17.0');
-    log('• 设置默认版本: nvm alias default 18.17.0');
-    log('• 查看已安装版本: nvm list');
     return;
   }
   
