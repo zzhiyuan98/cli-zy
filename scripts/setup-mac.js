@@ -123,7 +123,7 @@ function installGit() {
 }
 
 // 安装 nvm
-function installNodeJS() {
+function installNvm() {
   logStep('3️⃣', '安装 nvm');
   
   if (commandExists('nvm')) {
@@ -256,7 +256,7 @@ function main() {
   // 执行配置步骤
   installHomebrew();
   installGit();
-  installNodeJS();
+  installNvm();
   installFzf();
   installITerm2();
   installOhMyPosh();
