@@ -20,7 +20,7 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 # 安装 cli-zy
-npm install -g /workspaces/cli-zy
+sudo npm install -g /workspaces/cli-zy
 
 # 运行测试
 echo "🚀 运行 cli-zy setup..."
