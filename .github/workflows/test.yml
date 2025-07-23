@@ -25,6 +25,9 @@ jobs:
     - name: Test cli-zy setup
       run: cli-zy setup
       
+    - name: Test cli-zy clone help
+      run: cli-zy clone
+      
     - name: Verify Homebrew installation
       run: |
         if ! command -v brew >/dev/null 2>&1; then

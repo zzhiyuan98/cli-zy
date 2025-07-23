@@ -38,6 +38,9 @@ npm install -g cli-zy
 
 # 2. 配置开发环境
 cli-zy setup
+
+# 3. clone 仓库
+cli-zy clone username/repo
 ```
 
 ### 自动安装的工具
@@ -48,6 +51,13 @@ cli-zy setup
 - fzf - 模糊查找工具
 - iTerm2 - 增强终端
 - Oh My Posh - 终端美化
+
+### node 版本的 lki clone
+
+- 支持多种 Git URL 格式
+- 自动创建 `~/code/src` 目录结构
+- 按域名组织项目（如 `~/code/src/github.com/username/repo`）
+- 自动检测 SSH 密钥，选择合适的协议
 
 ## 📋 Git 快捷命令
 
@@ -66,10 +76,42 @@ cli-zy setup
 | `id` | `git rev-parse --short HEAD \| xargs echo -n \| pbcopy` | 复制当前提交 ID |
 | `undo` | `git reset --soft HEAD~` | 撤销上次提交 |
 
+## 🚀 lki clone
+
+### 支持的 URL 格式
+
+```bash
+# 完整 URL
+cli-zy clone git@github.com:username/repo.git
+cli-zy clone https://github.com/username/repo.git
+
+# 简写格式（自动推断为 GitHub）
+cli-zy clone username/repo
+
+# 其他 Git 服务
+cli-zy clone gitlab.com/username/repo
+```
+
+### 目录结构
+
+克隆的仓库会自动组织到以下目录结构：
+```
+~/code/src/
+├── github.com/
+│   ├── username/
+│   │   └── repo/
+│   └── another-user/
+│       └── another-repo/
+└── gitlab.com/
+    └── username/
+        └── repo/
+```
+
 ## 🔧 命令
 
 ```bash
 cli-zy setup     # 配置开发环境
+cli-zy clone     # clone 仓库
 cli-zy help      # 显示帮助
 ```
 
