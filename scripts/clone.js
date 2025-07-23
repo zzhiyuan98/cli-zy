@@ -115,13 +115,10 @@ function main() {
     return;
   }
   
-  logError('请提供 Git 仓库 URL');
+  // 显示帮助信息而不是错误
+  log('📋 cli-zy clone - 智能克隆 Git 仓库');
   log('使用方法: cli-zy clone <repository-url>');
-  log('示例:');
-  log('  cli-zy clone git@github.com:username/repo.git');
-  log('  cli-zy clone https://github.com/username/repo.git');
-  log('  cli-zy clone username/repo  # 自动推断为 GitHub 仓库');
-  process.exit(1);
+  log('示例: cli-zy clone username/repo');
 }
 
 // 运行主函数
