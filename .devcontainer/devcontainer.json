@@ -1,0 +1,17 @@
+{
+  "name": "cli-zy macOS Test Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:macos",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-json",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "echo 'Ready to test cli-zy package installation on macOS'",
+  "remoteUser": "vscode"
+} 
