@@ -67,7 +67,7 @@ function aliasesExist(configPath) {
     return content.includes('alias gca=');
   }
   
-  return false;
+    return false;
 }
 
 // 安装 Git 并配置别名
@@ -130,9 +130,45 @@ function installGit() {
   });
 }
 
+// 配置工作区快捷切换功能
+function setupWorkspace() {
+  logStep('5️⃣', '配置工作区快捷切换功能');
+  log(`📁 配置文件: ${configPath}`);
+  
+  // 检查是否已存在
+  if (commandExists('ws')) {
+    logWarning('工作区快捷功能已存在，跳过设置');
+    logWarning(`如需重新设置，请先手动删除 ${shellName} 中的工作区配置`);
+    return;
+  }
+  
+  // 确保配置文件存在
+  if (!fs.existsSync(configPath)) {
+    log(`📝 创建 ${shellName} 文件...`);
+    fs.writeFileSync(configPath, '');
+  }
+  
+  // 生成工作区配置
+  const workspaceConfig = `
+# 工作区快捷切换函数 (由 cli-zy 自动生成)
+ws () {
+  WS=$(find ~/code/src -maxdepth 5 -type d -name .git | sed "s/\\/\\.git//" | fzf -1 -0)
+  cd "${WS}" || exit
+}
+# 结束 cli-zy 工作区配置
+`;
+  
+  // 写入配置文件
+  fs.appendFileSync(configPath, workspaceConfig);
+  logSuccess('工作区快捷功能配置完成');
+  
+  log('\n📋 工作区快捷命令：', 'cyan');
+  log('   ws   - 快速切换到 Git 仓库工作区');
+}
+
 // 安装 nvm
 function installNvm() {
-  logStep('3️⃣', '安装 nvm');
+  logStep('4️⃣', '安装 nvm');
   
   if (commandExists('nvm')) {
     logSuccess('nvm 已安装');
@@ -207,7 +243,7 @@ function installFzf() {
 
 // 安装 iTerm2
 function installITerm2() {
-  logStep('5️⃣', '安装 iTerm2');
+  logStep('7️⃣', '安装 iTerm2');
   
   if (commandExists('iterm2')) {
     logSuccess('iTerm2 已安装');
@@ -225,7 +261,7 @@ function installITerm2() {
 
 // 安装 Oh My Posh
 function installOhMyPosh() {
-  logStep('6️⃣', '安装 Oh My Posh');
+  logStep('8️⃣', '安装 Oh My Posh');
   
   if (commandExists('oh-my-posh')) {
     logSuccess('Oh My Posh 已安装');
@@ -257,7 +293,7 @@ function installOhMyPosh() {
 
 // 重新加载 shell 配置
 function reloadShellConfig() {
-  logStep('7️⃣', '重新加载 Shell 配置');
+  logStep('9️⃣', '重新加载 Shell 配置');
   
   if (!fs.existsSync(configPath)) {
     logWarning('配置文件不存在，跳过重新加载');
@@ -287,6 +323,7 @@ function main() {
   installGit();
   installNvm();
   installFzf();
+  setupWorkspace();
   installITerm2();
   installOhMyPosh();
   reloadShellConfig();

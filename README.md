@@ -7,6 +7,7 @@
 - 🎯 **一键配置** - 自动配置 Mac 前端开发环境
 - 🔧 **开发工具** - 安装 Homebrew、Git、nvm、fzf、iTerm2、Oh My Posh 等开发工具
 - 📋 **Git 别名** - 自动配置 Git 快捷命令别名
+- 🚀 **工作区切换** - 提供 `ws` 命令快速切换 Git 仓库
 - 🎨 **美化终端** - 配置美观的命令行提示符和增强终端
 - 🛡️ **智能检测** - 自动识别已安装的工具，避免重复安装
 
@@ -41,6 +42,9 @@ cli-zy setup
 
 # 3. clone 仓库
 cli-zy clone username/repo
+
+# 4. 快速切换工作区
+ws
 ```
 
 ### 自动安装的工具
@@ -75,6 +79,26 @@ cli-zy clone username/repo
 | `gcp` | `git cherry-pick` | 遴选 |
 | `id` | `git rev-parse --short HEAD \| xargs echo -n \| pbcopy` | 复制当前提交 ID |
 | `undo` | `git reset --soft HEAD~` | 撤销上次提交 |
+
+## 🚀 工作区快捷切换
+
+### `ws` 命令
+
+快速切换到任何 Git 仓库工作区：
+
+```bash
+ws
+```
+
+**功能：**
+- 在 `~/code/src` 目录下搜索所有 Git 仓库
+- 使用模糊查找器（fzf）交互式选择要切换的项目
+- 自动切换到选中的项目目录
+
+**使用场景：**
+- 快速在多个项目间切换
+- 不需要记住具体的项目路径
+- 配合 `cli-zy clone` 使用，克隆后可以立即用 `ws` 切换
 
 ## 🚀 lki clone
 
@@ -113,6 +137,7 @@ cli-zy clone gitlab.com/username/repo
 cli-zy setup     # 配置开发环境
 cli-zy clone     # clone 仓库
 cli-zy help      # 显示帮助
+ws               # 快速切换工作区（配置后可用）
 ```
 
 ## 🛠️ 开发

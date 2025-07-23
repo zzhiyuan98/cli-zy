@@ -28,6 +28,21 @@ jobs:
     - name: Test cli-zy clone help
       run: cli-zy clone
       
+    - name: Test cli-zy clone functionality
+      run: |
+        # 创建测试目录结构
+        mkdir -p ~/code/src/github.com/test-user
+        cd ~/code/src/github.com/test-user
+        
+        # 创建一个测试 Git 仓库
+        git init test-repo
+        cd test-repo
+        echo "# Test Repository" > README.md
+        git add README.md
+        git commit -m "Initial commit"
+        
+        echo "✅ Test repository created successfully"
+      
     - name: Verify Homebrew installation
       run: |
         if ! command -v brew >/dev/null 2>&1; then
@@ -125,9 +140,41 @@ jobs:
         echo "📄 Shell configuration files:"
         if [ -f ~/.zshrc ]; then
           echo "~/.zshrc exists"
-          cat ~/.zshrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh)" || echo "No relevant configurations found"
+          cat ~/.zshrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
         fi
         if [ -f ~/.bashrc ]; then
           echo "~/.bashrc exists"
-          cat ~/.bashrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh)" || echo "No relevant configurations found"
+          cat ~/.bashrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
+        fi
+        
+    - name: Verify workspace shortcut function
+      run: |
+        # 检查 ws 函数是否已配置
+        if [ -f ~/.zshrc ] && grep -q "ws ()" ~/.zshrc; then
+          echo "✅ Workspace shortcut function found in ~/.zshrc"
+          grep -A 10 "ws ()" ~/.zshrc
+        elif [ -f ~/.bashrc ] && grep -q "ws ()" ~/.bashrc; then
+          echo "✅ Workspace shortcut function found in ~/.bashrc"
+          grep -A 10 "ws ()" ~/.bashrc
+        else
+          echo "❌ Workspace shortcut function not found in configuration files"
+          exit 1
+        fi
+        
+    - name: Test workspace shortcut function
+      run: |
+        # 手动加载 shell 配置以测试 ws 函数
+        if [ -f ~/.zshrc ]; then
+          source ~/.zshrc
+        elif [ -f ~/.bashrc ]; then
+          source ~/.bashrc
+        fi
+        
+        # 检查 ws 函数是否可用
+        if command -v ws >/dev/null 2>&1; then
+          echo "✅ ws function is available"
+          type ws
+        else
+          echo "❌ ws function is not available"
+          exit 1
         fi 
