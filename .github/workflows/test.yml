@@ -27,50 +27,55 @@ jobs:
       
     - name: Verify Homebrew installation
       run: |
-        if command -v brew >/dev/null 2>&1; then
-          echo "✅ Homebrew installed successfully"
-          brew --version
-        else
+        if ! command -v brew >/dev/null 2>&1; then
           echo "❌ Homebrew installation failed"
           exit 1
         fi
         
+        echo "✅ Homebrew installed successfully"
+        brew --version
+        
     - name: Verify Git installation
       run: |
-        if command -v git >/dev/null 2>&1; then
-          echo "✅ Git installed successfully"
-          git --version
-        else
+        if ! command -v git >/dev/null 2>&1; then
           echo "❌ Git installation failed"
           exit 1
         fi
         
+        echo "✅ Git installed successfully"
+        git --version
+        
     - name: Verify nvm installation
       run: |
-        # 重新加载 shell 配置以加载 nvm
-        if [ -f ~/.zshrc ]; then
-          source ~/.zshrc
-        elif [ -f ~/.bashrc ]; then
-          source ~/.bashrc
-        fi
-        
-        if command -v nvm >/dev/null 2>&1; then
-          echo "✅ nvm installed successfully"
-          nvm --version
-        else
-          echo "❌ nvm installation failed"
+        # 检查 nvm 是否已安装
+        if [ ! -d "$HOME/.nvm" ]; then
+          echo "❌ nvm directory not found"
           exit 1
         fi
+        
+        echo "✅ nvm directory exists"
+        
+        # 手动加载 nvm（在同一个 shell 会话中）
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        
+        if ! command -v nvm >/dev/null 2>&1; then
+          echo "❌ nvm failed to load"
+          exit 1
+        fi
+        
+        echo "✅ nvm loaded successfully"
+        nvm --version
         
     - name: Verify fzf installation
       run: |
-        if command -v fzf >/dev/null 2>&1; then
-          echo "✅ fzf installed successfully"
-          fzf --version
-        else
+        if ! command -v fzf >/dev/null 2>&1; then
           echo "❌ fzf installation failed"
           exit 1
         fi
+        
+        echo "✅ fzf installed successfully"
+        fzf --version
         
     - name: Verify Git aliases
       run: |
