@@ -49,7 +49,7 @@ const gitAliases = {
   'pull': 'git pull --rebase',
   'grbi':  'git rebase -i',
   'grh': 'git reset --hard',
-  'gdbr': 'git branch --list | grep -Ev \'^\* \' | fzf -m | xargs -I {} git branch -D {}',
+  'gdbr': 'git branch --list | grep -Ev "^\\* " | fzf -m | xargs -I {} git branch -D {}',
   'gcp': 'git cherry-pick',
   'id': 'git rev-parse --short HEAD | xargs echo -n | pbcopy',
   'undo': 'git reset --soft HEAD~',
@@ -194,11 +194,14 @@ function installOhMyPosh() {
     
     // 配置 Oh My Posh
     const configPath = getShellConfigPath();
-    const ohMyPoshConfig = '\n# Oh My Posh 配置\neval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n';
+    const shellName = path.basename(configPath);
+    const isZsh = shellName === '.zshrc';
+    const shellType = isZsh ? 'zsh' : 'bash';
+    const ohMyPoshConfig = `\n# Oh My Posh 配置\neval "$(oh-my-posh init ${shellType} --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n`;
     
     if (!fs.readFileSync(configPath, 'utf8').includes('oh-my-posh init')) {
       fs.appendFileSync(configPath, ohMyPoshConfig);
-      logSuccess('Oh My Posh 配置已添加到 shell 配置文件');
+      logSuccess(`Oh My Posh 配置已添加到 ${shellName} 配置文件`);
     }
     
     log('\n💡 提示：', 'cyan');
