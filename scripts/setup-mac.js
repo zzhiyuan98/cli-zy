@@ -6,6 +6,10 @@ const path = require('path');
 const os = require('os');
 const { log, logStep, logSuccess, logWarning, logError, commandExists, runCommand, getShellConfigPath } = require('./utils');
 
+// 全局变量
+const configPath = getShellConfigPath();
+const shellName = path.basename(configPath);
+
 // 检查并安装 Homebrew
 function installHomebrew() {
   logStep('1️⃣', '检查 Homebrew');
@@ -30,7 +34,6 @@ function installHomebrew() {
   }
   
   // 添加 Homebrew 路径到配置文件
-  const configPath = getShellConfigPath();
   const brewPath = os.arch() === 'arm64' 
     ? 'export PATH="/opt/homebrew/bin:$PATH"'
     : 'export PATH="/usr/local/bin:$PATH"';
@@ -85,9 +88,6 @@ function installGit() {
   }
   
   // 配置 Git 别名
-  const configPath = getShellConfigPath();
-  const shellName = path.basename(configPath);
-  
   logStep('2️⃣', '配置 Git 快捷命令别名');
   log(`📁 配置文件: ${configPath}`);
   
@@ -142,7 +142,6 @@ function installNodeJS() {
   runCommand(nvmInstallScript, '安装 nvm');
   
   // 配置 nvm 环境变量
-  const configPath = getShellConfigPath();
   const nvmConfig = '\n# nvm 配置\nexport NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"\n[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"\n';
   
   if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
@@ -213,8 +212,6 @@ function installOhMyPosh() {
   runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
   
   // 配置 Oh My Posh
-  const configPath = getShellConfigPath();
-  const shellName = path.basename(configPath);
   const isZsh = shellName === '.zshrc';
   const shellType = isZsh ? 'zsh' : 'bash';
   const ohMyPoshConfig = `\n# Oh My Posh 配置\neval "$(oh-my-posh init ${shellType} --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n`;
@@ -232,8 +229,6 @@ function installOhMyPosh() {
 // 重新加载 shell 配置
 function reloadShellConfig() {
   logStep('7️⃣', '重新加载 Shell 配置');
-  
-  const configPath = getShellConfigPath();
   
   if (!fs.existsSync(configPath)) {
     logWarning('配置文件不存在，跳过重新加载');
