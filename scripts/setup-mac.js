@@ -62,12 +62,12 @@ const gitAliases = {
 
 // 检查别名是否已存在
 function aliasesExist(configPath) {
-  if (!fs.existsSync(configPath)) {
-    return false;
+  if (fs.existsSync(configPath)) {
+    const content = fs.readFileSync(configPath, 'utf8');
+    return content.includes('alias gca=');
   }
   
-  const content = fs.readFileSync(configPath, 'utf8');
-  return content.includes('alias gca=');
+  return false;
 }
 
 // 安装 Git 并配置别名
@@ -75,16 +75,24 @@ function installGit() {
   logStep('2️⃣', '安装 Git 并配置别名');
   
   // 安装 Git
-  if (!commandExists('git')) {
+  const gitInstalled = (() => {
+    if (commandExists('git')) {
+      logSuccess('Git 已安装');
+      return true;
+    }
+    
     if (!commandExists('brew')) {
       logWarning('Homebrew 未安装，无法自动安装 Git');
       logWarning('请从 Git 官网下载安装：https://git-scm.com/download/mac');
-      return;
+      return false;
     }
     
     runCommand('brew install git', '使用 Homebrew 安装 Git');
-  } else {
-    logSuccess('Git 已安装');
+    return true;
+  })();
+  
+  if (!gitInstalled) {
+    return;
   }
   
   // 配置 Git 别名
