@@ -85,15 +85,23 @@ jobs:
     - name: Test Git aliases
       run: |
         # 测试 Git 别名是否可用
+        echo "🔍 Checking shell configuration files..."
+        ls -la ~/.zshrc ~/.bashrc 2>/dev/null || echo "No config files found"
+        
         # 先检查配置文件是否存在
         if [ -f ~/.zshrc ]; then
+          echo "📄 Loading ~/.zshrc"
           source ~/.zshrc
         elif [ -f ~/.bashrc ]; then
+          echo "📄 Loading ~/.bashrc"
           source ~/.bashrc
         else
           echo "❌ No shell configuration file found"
           exit 1
         fi
+        
+        echo "🔍 Checking available aliases..."
+        alias | grep git || echo "No git aliases found"
         
         # 检查别名是否可用
         if alias gca >/dev/null 2>&1; then
@@ -101,8 +109,8 @@ jobs:
           alias gca
         else
           echo "❌ Git alias 'gca' is not available"
-          echo "Available aliases:"
-          alias | grep git || echo "No git aliases found"
+          echo "All available aliases:"
+          alias
           exit 1
         fi
         
