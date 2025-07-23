@@ -136,7 +136,8 @@ function setupWorkspace() {
   log(`📁 配置文件: ${configPath}`);
   
   // 检查是否已存在
-  if (commandExists('ws')) {
+  const configContent = fs.readFileSync(configPath, 'utf8');
+  if (configContent.includes('ws () {')) {
     logWarning('工作区快捷功能已存在，跳过设置');
     logWarning(`如需重新设置，请先手动删除 ${shellName} 中的工作区配置`);
     return;
@@ -152,8 +153,8 @@ function setupWorkspace() {
   const workspaceConfig = `
 # 工作区快捷切换函数 (由 cli-zy 自动生成)
 ws () {
-  WS=$(find ~/code/src -maxdepth 5 -type d -name .git | sed "s/\\/\\.git//" | fzf -1 -0)
-  cd "${WS}" || exit
+  WS=\$(find ~/code/src -maxdepth 5 -type d -name .git | sed "s/\\/\\.git//" | fzf -1 -0)
+  cd "\${WS}" || exit
 }
 # 结束 cli-zy 工作区配置
 `;
@@ -189,18 +190,18 @@ export NVM_DIR="$HOME/.nvm"
 # 自动切换 Node.js 版本
 autoload -U add-zsh-hook
 load-nvmrc() {
-  local node_version="$(nvm version)"
-  local nvmrc_path="$(nvm_find_nvmrc)"
+  local node_version="\$(nvm version)"
+  local nvmrc_path="\$(nvm_find_nvmrc)"
 
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+  if [ -n "\$nvmrc_path" ]; then
+    local nvmrc_node_version=\$(nvm version "\$(cat "\${nvmrc_path}")")
 
-    if [ "$nvmrc_node_version" = "N/A" ]; then
+    if [ "\$nvmrc_node_version" = "N/A" ]; then
       nvm install
-    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+    elif [ "\$nvmrc_node_version" != "\$node_version" ]; then
       nvm use
     fi
-  elif [ "$node_version" != "$(nvm version default)" ]; then
+  elif [ "\$node_version" != "\$(nvm version default)" ]; then
     echo "Reverting to nvm default version"
     nvm use default
   fi
@@ -209,9 +210,12 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 `;
   
-  if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
+  const configContent = fs.readFileSync(configPath, 'utf8');
+  if (!configContent.includes('export NVM_DIR')) {
     fs.appendFileSync(configPath, nvmConfig);
     logSuccess('nvm 环境变量已配置');
+  } else {
+    logSuccess('nvm 配置已存在');
   }
   
   logSuccess('nvm 安装完成');
@@ -245,7 +249,7 @@ function installFzf() {
 function installITerm2() {
   logStep('7️⃣', '安装 iTerm2');
   
-  if (commandExists('iterm2')) {
+  if (fs.existsSync('/Applications/iTerm.app')) {
     logSuccess('iTerm2 已安装');
     return;
   }
