@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-14
     
     steps:
     - name: Checkout code
@@ -85,11 +85,24 @@ jobs:
     - name: Test Git aliases
       run: |
         # 测试 Git 别名是否可用
-        source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null
+        # 先检查配置文件是否存在
+        if [ -f ~/.zshrc ]; then
+          source ~/.zshrc
+        elif [ -f ~/.bashrc ]; then
+          source ~/.bashrc
+        else
+          echo "❌ No shell configuration file found"
+          exit 1
+        fi
+        
+        # 检查别名是否可用
         if alias gca >/dev/null 2>&1; then
           echo "✅ Git alias 'gca' is available"
+          alias gca
         else
           echo "❌ Git alias 'gca' is not available"
+          echo "Available aliases:"
+          alias | grep git || echo "No git aliases found"
           exit 1
         fi
         
