@@ -10,7 +10,21 @@
 - 🎨 **美化终端** - 配置美观的命令行提示符和增强终端
 - 🛡️ **智能检测** - 自动识别已安装的工具，避免重复安装
 
-## 📦 安装
+## 📋 前置条件
+
+安装 Node.js 环境：
+
+```bash
+# 访问 https://nodejs.org/ 下载并安装 LTS 版本
+# 或使用命令行安装
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install --lts
+nvm use --lts
+```
+
+## 📦 安装 cli-zy
 
 ```bash
 npm install -g cli-zy
@@ -19,18 +33,21 @@ npm install -g cli-zy
 ## 🚀 快速开始
 
 ```bash
-# 一键配置 Mac 开发环境
+# 1. 安装 cli-zy
+npm install -g cli-zy
+
+# 2. 配置开发环境
 cli-zy setup
 ```
 
-### 配置内容
+### 自动安装的工具
 
-- **Homebrew** - macOS 包管理器
-- **Git** - 版本控制工具和快捷命令别名
-- **nvm** - Node.js 版本管理器
-- **fzf** - 模糊查找工具（用于交互式分支选择）
-- **iTerm2** - 增强的终端模拟器
-- **Oh My Posh** - 美观的命令行提示符（使用 atomic 主题）
+- Homebrew - macOS 包管理器
+- Git - 版本控制工具
+- nvm - Node.js 版本管理器
+- fzf - 模糊查找工具
+- iTerm2 - 增强终端
+- Oh My Posh - 终端美化
 
 ## 📋 Git 快捷命令
 
@@ -49,23 +66,33 @@ cli-zy setup
 | `id` | `git rev-parse --short HEAD \| xargs echo -n \| pbcopy` | 复制当前提交 ID |
 | `undo` | `git reset --soft HEAD~` | 撤销上次提交 |
 
-## 🔧 CLI 命令
+## 🔧 命令
 
 ```bash
-cli-zy setup     # 配置 Mac 开发环境
-cli-zy help      # 显示帮助信息
+cli-zy setup     # 配置开发环境
+cli-zy help      # 显示帮助
 ```
 
 ## 🛠️ 开发
 
 ```bash
-npm install      # 安装依赖
-npm run release  # 发布新版本
+git clone https://github.com/zzhiyuan98/cli-zy.git
+cd cli-zy
+npm install -g .  # 本地安装测试
+```
+
+## 🧪 测试
+
+```bash
+npm run test:codespace  # GitHub Codespaces 测试
+npm run test:env        # 本地环境测试
 ```
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
+
+**要求：** Node.js 18+, npm 9+, macOS
 
 ## 📄 许可证
 
