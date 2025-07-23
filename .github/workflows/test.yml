@@ -47,6 +47,10 @@ jobs:
         
     - name: Verify nvm installation
       run: |
+        # nvm 是一个 shell 函数，需要先加载
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        
         if command -v nvm >/dev/null 2>&1; then
           echo "✅ nvm installed successfully"
           nvm --version
