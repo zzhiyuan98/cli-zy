@@ -190,7 +190,7 @@ function installOhMyPosh() {
   
   // 使用 Homebrew 安装 Oh My Posh
   if (commandExists('brew')) {
-    runCommand('brew install jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
+    runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
     
     // 配置 Oh My Posh
     const configPath = getShellConfigPath();
