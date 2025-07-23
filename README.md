@@ -81,12 +81,7 @@ cd cli-zy
 npm install -g .  # 本地安装测试
 ```
 
-## 🧪 测试
 
-```bash
-npm run test:codespace  # GitHub Codespaces 测试
-npm run test:env        # 本地环境测试
-```
 
 ## 🤝 贡献
 

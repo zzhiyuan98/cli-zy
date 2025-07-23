@@ -7,8 +7,7 @@
     "cli-zy": "./bin/cli-zy.js"
   },
   "scripts": {
-    "release": "npm version patch && git push && npm publish",
-    "test:codespace": "bash scripts/test-codespace.sh"
+    "release": "npm version patch && git push && npm publish"
   },
   "keywords": [
     "cli",
