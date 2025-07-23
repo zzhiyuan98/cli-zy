@@ -22,21 +22,22 @@ function installHomebrew() {
   try {
     execSync(installCommand, { stdio: 'inherit' });
     logSuccess('Homebrew 安装完成');
-    
-    // 添加 Homebrew 路径到配置文件
-    const configPath = getShellConfigPath();
-    const brewPath = os.arch() === 'arm64' 
-      ? 'export PATH="/opt/homebrew/bin:$PATH"'
-      : 'export PATH="/usr/local/bin:$PATH"';
-    
-    if (!fs.readFileSync(configPath, 'utf8').includes(brewPath)) {
-      fs.appendFileSync(configPath, `\n# Homebrew\n${brewPath}\n`);
-      logSuccess('Homebrew 路径已添加到配置文件');
-    }
   } catch (error) {
     logError(`Homebrew 安装失败: ${error.message}`);
     logWarning('请手动安装 Homebrew:');
     logWarning('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"');
+    return;
+  }
+  
+  // 添加 Homebrew 路径到配置文件
+  const configPath = getShellConfigPath();
+  const brewPath = os.arch() === 'arm64' 
+    ? 'export PATH="/opt/homebrew/bin:$PATH"'
+    : 'export PATH="/usr/local/bin:$PATH"';
+  
+  if (!fs.readFileSync(configPath, 'utf8').includes(brewPath)) {
+    fs.appendFileSync(configPath, `\n# Homebrew\n${brewPath}\n`);
+    logSuccess('Homebrew 路径已添加到配置文件');
   }
 }
 
@@ -71,18 +72,16 @@ function installGit() {
   logStep('2️⃣', '安装 Git 并配置别名');
   
   // 安装 Git
-  if (commandExists('git')) {
-    logSuccess('Git 已安装');
-  } else {
-    // 优先使用 Homebrew 安装
-    if (commandExists('brew')) {
-      runCommand('brew install git', '使用 Homebrew 安装 Git');
-    } else {
-      // Homebrew 不可用时，引导用户去官网下载
+  if (!commandExists('git')) {
+    if (!commandExists('brew')) {
       logWarning('Homebrew 未安装，无法自动安装 Git');
       logWarning('请从 Git 官网下载安装：https://git-scm.com/download/mac');
       return;
     }
+    
+    runCommand('brew install git', '使用 Homebrew 安装 Git');
+  } else {
+    logSuccess('Git 已安装');
   }
   
   // 配置 Git 别名
@@ -129,19 +128,26 @@ function installNodeJS() {
   
   if (commandExists('nvm')) {
     logSuccess('nvm 已安装');
-  } else {
-    // 安装 nvm
-    const nvmInstallScript = 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash';
-    runCommand(nvmInstallScript, '安装 nvm');
-    
-    // 配置 nvm 环境变量
-    const configPath = getShellConfigPath();
-    const nvmConfig = '\n# nvm 配置\nexport NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"\n[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"\n';
-    
-    if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
-      fs.appendFileSync(configPath, nvmConfig);
-      logSuccess('nvm 环境变量已配置');
-    }
+    log('\n📋 nvm 基本用法：', 'cyan');
+    log('• 安装最新 LTS 版本: nvm install --lts');
+    log('• 安装指定版本: nvm install 18.17.0');
+    log('• 切换版本: nvm use 18.17.0');
+    log('• 设置默认版本: nvm alias default 18.17.0');
+    log('• 查看已安装版本: nvm list');
+    return;
+  }
+  
+  // 安装 nvm
+  const nvmInstallScript = 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash';
+  runCommand(nvmInstallScript, '安装 nvm');
+  
+  // 配置 nvm 环境变量
+  const configPath = getShellConfigPath();
+  const nvmConfig = '\n# nvm 配置\nexport NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"\n[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"\n';
+  
+  if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
+    fs.appendFileSync(configPath, nvmConfig);
+    logSuccess('nvm 环境变量已配置');
   }
   
   logSuccess('nvm 安装完成');
@@ -162,13 +168,13 @@ function installFzf() {
     return;
   }
   
-  // 优先使用 Homebrew 安装
-  if (commandExists('brew')) {
-    runCommand('brew install fzf', '使用 Homebrew 安装 fzf');
-  } else {
+  if (!commandExists('brew')) {
     logWarning('Homebrew 未安装，无法自动安装 fzf');
     logWarning('请手动安装 fzf: https://github.com/junegunn/fzf#installation');
+    return;
   }
+  
+  runCommand('brew install fzf', '使用 Homebrew 安装 fzf');
 }
 
 // 安装 iTerm2
@@ -180,13 +186,13 @@ function installITerm2() {
     return;
   }
   
-  // 使用 Homebrew 安装 iTerm2
-  if (commandExists('brew')) {
-    runCommand('brew install --cask iterm2', '使用 Homebrew 安装 iTerm2');
-  } else {
+  if (!commandExists('brew')) {
     logWarning('Homebrew 未安装，无法自动安装 iTerm2');
     logWarning('请手动安装 iTerm2: https://iterm2.com/downloads.html');
+    return;
   }
+  
+  runCommand('brew install --cask iterm2', '使用 Homebrew 安装 iTerm2');
 }
 
 // 安装 Oh My Posh
@@ -198,42 +204,45 @@ function installOhMyPosh() {
     return;
   }
   
-  // 使用 Homebrew 安装 Oh My Posh
-  if (commandExists('brew')) {
-    runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
-    
-    // 配置 Oh My Posh
-    const configPath = getShellConfigPath();
-    const shellName = path.basename(configPath);
-    const isZsh = shellName === '.zshrc';
-    const shellType = isZsh ? 'zsh' : 'bash';
-    const ohMyPoshConfig = `\n# Oh My Posh 配置\neval "$(oh-my-posh init ${shellType} --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n`;
-    
-    if (!fs.readFileSync(configPath, 'utf8').includes('oh-my-posh init')) {
-      fs.appendFileSync(configPath, ohMyPoshConfig);
-      logSuccess(`Oh My Posh 配置已添加到 ${shellName} 配置文件`);
-    }
-    
-    log('\n💡 提示：', 'cyan');
-    log('• 建议安装 Nerd Font 以显示所有图标');
-    log('• 可以自定义主题：oh-my-posh init zsh --config ~/.poshthemes/agnoster.omp.json');
-  } else {
+  if (!commandExists('brew')) {
     logWarning('Homebrew 未安装，无法自动安装 Oh My Posh');
     logWarning('请手动安装 Oh My Posh: https://ohmyposh.dev/docs/installation/macos');
+    return;
   }
+  
+  runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
+  
+  // 配置 Oh My Posh
+  const configPath = getShellConfigPath();
+  const shellName = path.basename(configPath);
+  const isZsh = shellName === '.zshrc';
+  const shellType = isZsh ? 'zsh' : 'bash';
+  const ohMyPoshConfig = `\n# Oh My Posh 配置\neval "$(oh-my-posh init ${shellType} --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n`;
+  
+  if (!fs.readFileSync(configPath, 'utf8').includes('oh-my-posh init')) {
+    fs.appendFileSync(configPath, ohMyPoshConfig);
+    logSuccess(`Oh My Posh 配置已添加到 ${shellName} 配置文件`);
+  }
+  
+  log('\n💡 提示：', 'cyan');
+  log('• 建议安装 Nerd Font 以显示所有图标');
+  log('• 可以自定义主题：oh-my-posh init zsh --config ~/.poshthemes/agnoster.omp.json');
 }
 
 // 重新加载 shell 配置
 function reloadShellConfig() {
   logStep('7️⃣', '重新加载 Shell 配置');
   
+  const configPath = getShellConfigPath();
+  
+  if (!fs.existsSync(configPath)) {
+    logWarning('配置文件不存在，跳过重新加载');
+    return;
+  }
+  
   try {
-    const configPath = getShellConfigPath();
-    
-    if (fs.existsSync(configPath)) {
-      execSync(`source ${configPath}`, { stdio: 'inherit', shell: true });
-      logSuccess('Shell 配置已重新加载');
-    }
+    execSync(`source ${configPath}`, { stdio: 'inherit', shell: true });
+    logSuccess('Shell 配置已重新加载');
   } catch (error) {
     logWarning('无法自动重新加载配置，请手动运行: source ~/.zshrc');
   }
