@@ -1,6 +1,6 @@
 {
-  "name": "cli-zy macOS Test Environment",
-  "image": "mcr.microsoft.com/devcontainers/base:macos",
+  "name": "cli-zy Test Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
@@ -12,6 +12,6 @@
       ]
     }
   },
-  "postCreateCommand": "echo 'Ready to test cli-zy package installation on macOS'",
+  "postCreateCommand": "echo 'Ready to test cli-zy package installation'",
   "remoteUser": "vscode"
 } 

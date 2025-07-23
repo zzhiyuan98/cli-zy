@@ -14,11 +14,9 @@ echo "   npm: $(npm --version 2>/dev/null || echo '未安装')"
 # 安装 Node.js（如果需要）
 if ! command -v node >/dev/null 2>&1; then
     echo "📥 安装 Node.js..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm install --lts
-    nvm use --lts
+    # 在 Ubuntu 环境中使用 apt 安装
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    sudo apt-get install -y nodejs
 fi
 
 # 安装 cli-zy
