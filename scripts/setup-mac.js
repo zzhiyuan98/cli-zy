@@ -16,6 +16,7 @@ function installHomebrew() {
   }
   
   logWarning('Homebrew 未安装，正在自动安装...');
+  logWarning('安装过程可能需要输入管理员密码');
   const installCommand = '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"';
   
   try {
@@ -132,6 +133,15 @@ function installNodeJS() {
     // 安装 nvm
     const nvmInstallScript = 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash';
     runCommand(nvmInstallScript, '安装 nvm');
+    
+    // 配置 nvm 环境变量
+    const configPath = getShellConfigPath();
+    const nvmConfig = '\n# nvm 配置\nexport NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"\n[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"\n';
+    
+    if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
+      fs.appendFileSync(configPath, nvmConfig);
+      logSuccess('nvm 环境变量已配置');
+    }
   }
   
   logSuccess('nvm 安装完成');
