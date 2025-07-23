@@ -161,9 +161,58 @@ function installFzf() {
   }
 }
 
+// 安装 iTerm2
+function installITerm2() {
+  logStep('5️⃣', '安装 iTerm2');
+  
+  if (commandExists('iterm2')) {
+    logSuccess('iTerm2 已安装');
+    return;
+  }
+  
+  // 使用 Homebrew 安装 iTerm2
+  if (commandExists('brew')) {
+    runCommand('brew install --cask iterm2', '使用 Homebrew 安装 iTerm2');
+  } else {
+    logWarning('Homebrew 未安装，无法自动安装 iTerm2');
+    logWarning('请手动安装 iTerm2: https://iterm2.com/downloads.html');
+  }
+}
+
+// 安装 Oh My Posh
+function installOhMyPosh() {
+  logStep('6️⃣', '安装 Oh My Posh');
+  
+  if (commandExists('oh-my-posh')) {
+    logSuccess('Oh My Posh 已安装');
+    return;
+  }
+  
+  // 使用 Homebrew 安装 Oh My Posh
+  if (commandExists('brew')) {
+    runCommand('brew install jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
+    
+    // 配置 Oh My Posh
+    const configPath = getShellConfigPath();
+    const ohMyPoshConfig = '\n# Oh My Posh 配置\neval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/atomic.omp.json)"\n';
+    
+    if (!fs.readFileSync(configPath, 'utf8').includes('oh-my-posh init')) {
+      fs.appendFileSync(configPath, ohMyPoshConfig);
+      logSuccess('Oh My Posh 配置已添加到 shell 配置文件');
+    }
+    
+    log('\n💡 提示：', 'cyan');
+    log('• 建议安装 Nerd Font 以显示所有图标');
+    log('• 可以自定义主题：oh-my-posh init zsh --config ~/.poshthemes/agnoster.omp.json');
+  } else {
+    logWarning('Homebrew 未安装，无法自动安装 Oh My Posh');
+    logWarning('请手动安装 Oh My Posh: https://ohmyposh.dev/docs/installation/macos');
+  }
+}
+
 // 重新加载 shell 配置
 function reloadShellConfig() {
-  logStep('5️⃣', '重新加载 Shell 配置');
+  logStep('7️⃣', '重新加载 Shell 配置');
   
   try {
     const configPath = getShellConfigPath();
@@ -192,6 +241,8 @@ function main() {
   installGit();
   installNodeJS();
   installFzf();
+  installITerm2();
+  installOhMyPosh();
   reloadShellConfig();
   
   log('\n🎉 Mac 开发环境配置完成！', 'bright');
