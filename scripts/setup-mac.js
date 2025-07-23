@@ -143,8 +143,35 @@ function installNvm() {
   const nvmInstallScript = 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash';
   runCommand(nvmInstallScript, '安装 nvm');
   
-  // 配置 nvm 环境变量
-  const nvmConfig = '\n# nvm 配置\nexport NVM_DIR="$HOME/.nvm"\n[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"\n[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"\n';
+  // 配置 nvm 环境变量和自动切换 Node.js 版本的功能
+  const nvmConfig = `
+# nvm 配置
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"
+
+# 自动切换 Node.js 版本
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+`;
   
   if (!fs.readFileSync(configPath, 'utf8').includes('export NVM_DIR')) {
     fs.appendFileSync(configPath, nvmConfig);
