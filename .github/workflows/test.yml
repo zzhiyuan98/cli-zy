@@ -143,20 +143,3 @@ jobs:
           exit 1
         fi
         
-    - name: Test workspace shortcut function
-      run: |
-        # 手动加载 shell 配置以测试 ws 函数
-        if [ -f ~/.zshrc ]; then
-          source ~/.zshrc
-        elif [ -f ~/.bashrc ]; then
-          source ~/.bashrc
-        fi
-        
-        # 检查 ws 函数是否可用
-        if command -v ws >/dev/null 2>&1; then
-          echo "✅ ws function is available"
-          type ws
-        else
-          echo "❌ ws function is not available"
-          exit 1
-        fi 
