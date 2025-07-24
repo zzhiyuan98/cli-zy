@@ -2,14 +2,7 @@
 
 🚀 **Zhiyuan Zhang's CLI** - Mac 开发环境配置工具
 
-## ✨ 特性
-
-- 🎯 **一键配置** - 自动配置 Mac 前端开发环境
-- 🔧 **开发工具** - 安装 Homebrew、Git、nvm、fzf、iTerm2、Oh My Posh 等开发工具
-- 📋 **Git 别名** - 自动配置 Git 快捷命令别名
-- 🚀 **工作区切换** - 提供 `ws` 命令快速切换 Git 仓库
-- 🎨 **美化终端** - 配置美观的命令行提示符和增强终端
-- 🛡️ **智能检测** - 自动识别已安装的工具，避免重复安装
+一键配置 Mac 前端开发环境，自动安装开发工具、配置 Git 别名、美化终端，并提供便捷的工作区管理功能。
 
 ## 📋 前置条件
 
@@ -25,7 +18,7 @@ nvm install --lts
 nvm use --lts
 ```
 
-## 📦 安装 cli-zy
+## 📦 安装
 
 ```bash
 npm install -g cli-zy
@@ -40,30 +33,27 @@ npm install -g cli-zy
 # 2. 配置开发环境
 cli-zy setup
 
-# 3. clone 仓库
+# 3. 克隆仓库
 cli-zy clone username/repo
 
 # 4. 快速切换工作区
 ws
 ```
 
+## 🔧 功能
+
 ### 自动安装的工具
 
-- Homebrew - macOS 包管理器
-- Git - 版本控制工具
-- nvm - Node.js 版本管理器
-- fzf - 模糊查找工具
-- iTerm2 - 增强终端
-- Oh My Posh - 终端美化
+- **Homebrew** - macOS 包管理器
+- **Git** - 版本控制工具
+- **nvm** - Node.js 版本管理器
+- **fzf** - 模糊查找工具
+- **iTerm2** - 增强终端
+- **Oh My Posh** - 终端美化
 
-### node 版本的 lki clone
+### Git 别名配置
 
-- 支持多种 Git URL 格式
-- 自动创建 `~/code/src` 目录结构
-- 按域名组织项目（如 `~/code/src/github.com/username/repo`）
-- 自动检测 SSH 密钥，选择合适的协议
-
-## 📋 Git 快捷命令
+工具包会自动配置以下 Git 快捷命令：
 
 | 别名 | 命令 | 说明 |
 |------|------|------|
@@ -80,29 +70,11 @@ ws
 | `id` | `git rev-parse --short HEAD \| xargs echo -n \| pbcopy` | 复制当前提交 ID |
 | `undo` | `git reset --soft HEAD~` | 撤销上次提交 |
 
-## 🚀 工作区快捷切换
+### 工作区管理
 
-### `ws` 命令
+#### `cli-zy clone` - 智能克隆
 
-快速切换到任何 Git 仓库工作区：
-
-```bash
-ws
-```
-
-**功能：**
-- 在 `~/code/src` 目录下搜索所有 Git 仓库
-- 使用模糊查找器（fzf）交互式选择要切换的项目
-- 自动切换到选中的项目目录
-
-**使用场景：**
-- 快速在多个项目间切换
-- 不需要记住具体的项目路径
-- 配合 `cli-zy clone` 使用，克隆后可以立即用 `ws` 切换
-
-## 🚀 lki clone
-
-### 支持的 URL 格式
+支持多种 Git URL 格式，自动创建规范的目录结构：
 
 ```bash
 # 完整 URL
@@ -116,9 +88,7 @@ cli-zy clone username/repo
 cli-zy clone gitlab.com/username/repo
 ```
 
-### 目录结构
-
-克隆的仓库会自动组织到以下目录结构：
+**目录结构：**
 ```
 ~/code/src/
 ├── github.com/
@@ -131,11 +101,24 @@ cli-zy clone gitlab.com/username/repo
         └── repo/
 ```
 
-## 🔧 命令
+#### `ws` - 快速切换工作区
+
+在 `~/code/src` 目录下搜索所有 Git 仓库，使用模糊查找器交互式选择：
+
+```bash
+ws
+```
+
+**使用场景：**
+- 快速在多个项目间切换
+- 不需要记住具体的项目路径
+- 配合 `cli-zy clone` 使用，克隆后可以立即用 `ws` 切换
+
+## 📋 命令
 
 ```bash
 cli-zy setup     # 配置开发环境
-cli-zy clone     # clone 仓库
+cli-zy clone     # 克隆仓库
 cli-zy help      # 显示帮助
 ws               # 快速切换工作区（配置后可用）
 ```
@@ -148,13 +131,9 @@ cd cli-zy
 npm install -g .  # 本地安装测试
 ```
 
-
-
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
-
-**要求：** Node.js 18+, npm 9+, macOS
 
 ## 📄 许可证
 
