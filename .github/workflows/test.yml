@@ -79,41 +79,33 @@ jobs:
         
     - name: Verify Git aliases
       run: |
-        if [ -f ~/.zshrc ] && grep -q "alias gca=" ~/.zshrc; then
-          echo "✅ Git aliases configured successfully"
-          grep "alias gca=" ~/.zshrc
-        elif [ -f ~/.bashrc ] && grep -q "alias gca=" ~/.bashrc; then
-          echo "✅ Git aliases configured successfully"
-          grep "alias gca=" ~/.bashrc
+        # 检查所有 Git 别名是否已配置
+        aliases=("gd" "gcb" "gco" "gca" "gpd" "pull" "grbi" "grh" "gdbr" "gcp" "id" "undo")
+        config_file=""
+        
+        if [ -f ~/.zshrc ]; then
+          config_file="~/.zshrc"
+        elif [ -f ~/.bashrc ]; then
+          config_file="~/.bashrc"
         else
-          echo "❌ Git aliases configuration failed"
+          echo "❌ No shell configuration file found"
           exit 1
         fi
         
-    - name: Test Git aliases
-      run: |
-        # 测试 Git 别名配置
-        echo "🔍 Checking shell configuration files..."
-        ls -la ~/.zshrc ~/.bashrc 2>/dev/null || echo "No config files found"
+        echo "🔍 Checking Git aliases in $config_file..."
+        missing_aliases=()
         
-        # 检查配置文件中的别名定义
-        if [ -f ~/.zshrc ] && grep -q "alias gca=" ~/.zshrc; then
-          echo "✅ Git alias 'gca' found in ~/.zshrc"
-          grep "alias gca=" ~/.zshrc
-        elif [ -f ~/.bashrc ] && grep -q "alias gca=" ~/.bashrc; then
-          echo "✅ Git alias 'gca' found in ~/.bashrc"
-          grep "alias gca=" ~/.bashrc
+        for alias in "${aliases[@]}"; do
+          if ! grep -q "^alias ${alias}=" $config_file; then
+            missing_aliases+=("$alias")
+          fi
+        done
+        
+        if [ ${#missing_aliases[@]} -eq 0 ]; then
+          echo "✅ All Git aliases configured successfully"
+          echo "Found aliases: ${aliases[*]}"
         else
-          echo "❌ Git alias 'gca' not found in configuration files"
-          echo "Configuration file contents:"
-          if [ -f ~/.zshrc ]; then
-            echo "~/.zshrc:"
-            cat ~/.zshrc
-          fi
-          if [ -f ~/.bashrc ]; then
-            echo "~/.bashrc:"
-            cat ~/.bashrc
-          fi
+          echo "❌ Missing Git aliases: ${missing_aliases[*]}"
           exit 1
         fi
         
