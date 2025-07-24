@@ -84,9 +84,9 @@ jobs:
         config_file=""
         
         if [ -f ~/.zshrc ]; then
-          config_file="~/.zshrc"
+          config_file="$HOME/.zshrc"
         elif [ -f ~/.bashrc ]; then
-          config_file="~/.bashrc"
+          config_file="$HOME/.bashrc"
         else
           echo "❌ No shell configuration file found"
           exit 1
@@ -96,7 +96,7 @@ jobs:
         missing_aliases=()
         
         for alias in "${aliases[@]}"; do
-          if ! grep -q "^alias ${alias}=" $config_file; then
+          if ! grep -q "^alias ${alias}=" "$config_file"; then
             missing_aliases+=("$alias")
           fi
         done
@@ -114,22 +114,22 @@ jobs:
         echo "📄 Shell configuration files:"
         if [ -f ~/.zshrc ]; then
           echo "~/.zshrc exists"
-          cat ~/.zshrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
+          cat "$HOME/.zshrc" | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
         fi
         if [ -f ~/.bashrc ]; then
           echo "~/.bashrc exists"
-          cat ~/.bashrc | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
+          cat "$HOME/.bashrc" | grep -E "(alias|Homebrew|nvm|fzf|Oh My Posh|ws)" || echo "No relevant configurations found"
         fi
         
     - name: Verify workspace shortcut function
       run: |
         # 检查 ws 函数是否已配置
-        if [ -f ~/.zshrc ] && grep -q "ws ()" ~/.zshrc; then
+        if [ -f ~/.zshrc ] && grep -q "ws ()" "$HOME/.zshrc"; then
           echo "✅ Workspace shortcut function found in ~/.zshrc"
-          grep -A 10 "ws ()" ~/.zshrc
-        elif [ -f ~/.bashrc ] && grep -q "ws ()" ~/.bashrc; then
+          grep -A 10 "ws ()" "$HOME/.zshrc"
+        elif [ -f ~/.bashrc ] && grep -q "ws ()" "$HOME/.bashrc"; then
           echo "✅ Workspace shortcut function found in ~/.bashrc"
-          grep -A 10 "ws ()" ~/.bashrc
+          grep -A 10 "ws ()" "$HOME/.bashrc"
         else
           echo "❌ Workspace shortcut function not found in configuration files"
           exit 1
