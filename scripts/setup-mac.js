@@ -135,12 +135,21 @@ function installNvm() {
   const script = 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash';
   runCommand(script, '安装 nvm');
   
-  const config = `
+  const configContent = getConfigContent();
+  
+  if (!configContent.includes('export NVM_DIR')) {
+    const envConfig = `
 # nvm 配置
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"
-
+`;
+    fs.appendFileSync(configPath, envConfig);
+    logSuccess('nvm 环境变量已配置');
+  }
+  
+  if (!configContent.includes('load-nvmrc()')) {
+    const loadConfig = `
 # 自动切换 Node.js 版本
 autoload -U add-zsh-hook
 load-nvmrc() {
@@ -163,13 +172,8 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 `;
-  
-  const configContent = getConfigContent();
-  if (configContent.includes('export NVM_DIR')) {
-    logSuccess('nvm 配置已存在');
-  } else {
-    fs.appendFileSync(configPath, config);
-    logSuccess('nvm 环境变量已配置');
+    fs.appendFileSync(configPath, loadConfig);
+    logSuccess('nvm 自动切换配置已添加');
   }
   
   logSuccess('nvm 安装完成');
@@ -218,18 +222,27 @@ function installITerm2() {
 function installOhMyPosh() {
   logStep('8️⃣', '安装 Oh My Posh');
   
-  if (commandExists('oh-my-posh')) {
-    logSuccess('Oh My Posh 已安装');
+  const installed = (() => {
+    if (commandExists('oh-my-posh')) {
+      logSuccess('Oh My Posh 已安装');
+      return true;
+    }
+    
+    if (!commandExists('brew')) {
+      logWarning('Homebrew 未安装，无法自动安装 Oh My Posh');
+      logWarning('请手动安装 Oh My Posh: https://ohmyposh.dev/docs/installation/macos');
+      return false;
+    }
+    
+    return runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
+  })();
+  
+  if (!installed) {
     return;
   }
   
-  if (!commandExists('brew')) {
-    logWarning('Homebrew 未安装，无法自动安装 Oh My Posh');
-    logWarning('请手动安装 Oh My Posh: https://ohmyposh.dev/docs/installation/macos');
-    return;
-  }
-  
-  runCommand('brew install --formula jandedobbeleer/oh-my-posh/oh-my-posh', '使用 Homebrew 安装 Oh My Posh');
+  logStep('8️⃣', '配置 Oh My Posh');
+  log(`📁 配置文件: ${configPath}`);
   
   const isZsh = shellName === '.zshrc';
   const shellType = isZsh ? 'zsh' : 'bash';
