@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { log, logStep, logSuccess, logWarning, logError, commandExists, runCommand, getShellConfigPath } = require('./utils');
+const { GIT_ALIASES } = require('./constants');
 
 // 全局变量
 const configPath = getShellConfigPath();
@@ -44,31 +45,9 @@ function installHomebrew() {
   }
 }
 
-// Git 别名配置
-const gitAliases = {
-  'gd': 'git diff',
-  'gcb': 'git checkout -b',
-  'gco': 'git checkout',
-  'gca': 'git commit --all -S',
-  'gpd': 'git push o HEAD',
-  'pull': 'git pull --rebase',
-  'grbi':  'git rebase -i',
-  'grh': 'git reset --hard',
-  'gdbr': 'git branch --list | grep -Ev "^\\* " | fzf -m | xargs -I {} git branch -D {}',
-  'gcp': 'git cherry-pick',
-  'id': 'git rev-parse --short HEAD | xargs echo -n | pbcopy',
-  'undo': 'git reset --soft HEAD~',
-};
 
-// 检查别名是否已存在
-function aliasesExist(configPath) {
-  if (fs.existsSync(configPath)) {
-    const content = fs.readFileSync(configPath, 'utf8');
-    return content.includes('alias gca=');
-  }
-  
-    return false;
-}
+
+
 
 // 安装 Git 并配置别名
 function installGit() {
@@ -99,33 +78,37 @@ function installGit() {
   logStep('2️⃣', '配置 Git 快捷命令别名');
   log(`📁 配置文件: ${configPath}`);
   
-  // 检查是否已存在
-  if (aliasesExist(configPath)) {
-    logWarning('Git 别名已存在，跳过设置');
-    logWarning(`如需重新设置，请先手动删除 ${shellName} 中的别名配置`);
-    return;
-  }
-  
   // 确保配置文件存在
   if (!fs.existsSync(configPath)) {
     log(`📝 创建 ${shellName} 文件...`);
     fs.writeFileSync(configPath, '');
   }
   
-  // 生成别名配置
-  let aliasConfig = '\n# Git 快捷命令别名 (由 cli-zy 自动生成)\n';
-  Object.entries(gitAliases).forEach(([alias, command]) => {
-    aliasConfig += `alias ${alias}='${command}'\n`;
-  });
-  aliasConfig += '# 结束 cli-zy 别名配置\n';
+  // 读取现有配置内容
+  const configContent = fs.readFileSync(configPath, 'utf8');
   
-  // 写入配置文件
-  fs.appendFileSync(configPath, aliasConfig);
-  logSuccess('Git 别名配置完成');
+  // 生成别名配置，只添加不存在的别名
+  let aliasConfig = '\n';
+  let addedAliases = [];
+  
+  Object.entries(GIT_ALIASES).forEach(([alias, command]) => {
+    if (!configContent.includes(`alias ${alias}=`)) {
+      aliasConfig += `alias ${alias}='${command}'\n`;
+      addedAliases.push(alias);
+    }
+  });
+  
+  // 如果有新的别名需要添加，则写入配置文件
+  if (addedAliases.length > 0) {
+    fs.appendFileSync(configPath, aliasConfig);
+    logSuccess(`Git 别名配置完成，添加了 ${addedAliases.length} 个新别名`);
+  } else {
+    logSuccess('所有 Git 别名已存在，无需添加');
+  }
   
   // 显示可用命令
   log('\n📋 可用的 Git 快捷命令：', 'cyan');
-  Object.entries(gitAliases).forEach(([alias, command]) => {
+  Object.entries(GIT_ALIASES).forEach(([alias, command]) => {
     log(`   ${alias.padEnd(4)} - ${command}`);
   });
 }
@@ -151,12 +134,10 @@ function setupWorkspace() {
   
   // 生成工作区配置
   const workspaceConfig = `
-# 工作区快捷切换函数 (由 cli-zy 自动生成)
 ws () {
   WS=\$(find ~/code/src -maxdepth 5 -type d -name .git | sed "s/\\/\\.git//" | fzf -1 -0)
   cd "\${WS}" || exit
 }
-# 结束 cli-zy 工作区配置
 `;
   
   // 写入配置文件
