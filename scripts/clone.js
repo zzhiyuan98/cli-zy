@@ -108,7 +108,7 @@ function cloneRepository(url) {
 // 主函数
 function main() {
   const args = process.argv.slice(2);
-  const url = args[1];
+  const url = args[0] === 'clone' ? args[1] : args[0];
   
   if (url) {
     cloneRepository(url);
