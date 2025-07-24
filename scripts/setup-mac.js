@@ -136,65 +136,15 @@ function installNvm() {
   runCommand(script, '安装 nvm');
   
   const configContent = getConfigContent();
-  
   if (!configContent.includes('export NVM_DIR')) {
-    const envConfig = `
+    const config = `
 # nvm 配置
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \\. "$NVM_DIR/bash_completion"
 `;
-    fs.appendFileSync(configPath, envConfig);
+    fs.appendFileSync(configPath, config);
     logSuccess('nvm 环境变量已配置');
-  }
-  
-  if (!configContent.includes('load-nvmrc()')) {
-    const isZsh = shellName === '.zshrc';
-    const loadConfig = isZsh ? `
-# 自动切换 Node.js 版本 (zsh)
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local node_version="\$(nvm version)"
-  local nvmrc_path="\$(nvm_find_nvmrc)"
-
-  if [ -n "\$nvmrc_path" ]; then
-    local nvmrc_node_version=\$(nvm version "\$(cat "\${nvmrc_path}")")
-
-    if [ "\$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "\$nvmrc_node_version" != "\$node_version" ]; then
-      nvm use
-    fi
-  elif [ "\$node_version" != "\$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
-` : `
-# 自动切换 Node.js 版本 (bash)
-load-nvmrc() {
-  local node_version="\$(nvm version)"
-  local nvmrc_path="\$(nvm_find_nvmrc)"
-
-  if [ -n "\$nvmrc_path" ]; then
-    local nvmrc_node_version=\$(nvm version "\$(cat "\${nvmrc_path}")")
-
-    if [ "\$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "\$nvmrc_node_version" != "\$node_version" ]; then
-      nvm use
-    fi
-  elif [ "\$node_version" != "\$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-PROMPT_COMMAND="load-nvmrc; \$PROMPT_COMMAND"
-`;
-    fs.appendFileSync(configPath, loadConfig);
-    logSuccess('nvm 自动切换配置已添加');
   }
   
   logSuccess('nvm 安装完成');
