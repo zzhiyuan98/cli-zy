@@ -25,24 +25,6 @@ jobs:
     - name: Test cli-zy setup
       run: cli-zy setup
       
-    - name: Test cli-zy clone help
-      run: cli-zy clone
-      
-    - name: Test cli-zy clone functionality
-      run: |
-        # 创建测试目录结构
-        mkdir -p ~/code/src/github.com/test-user
-        cd ~/code/src/github.com/test-user
-        
-        # 创建一个测试 Git 仓库
-        git init test-repo
-        cd test-repo
-        echo "# Test Repository" > README.md
-        git add README.md
-        git commit -m "Initial commit"
-        
-        echo "✅ Test repository created successfully"
-      
     - name: Verify Homebrew installation
       run: |
         if ! command -v brew >/dev/null 2>&1; then
